@@ -3,14 +3,18 @@ services:
     name: n8n
     env: node
     buildCommand: NODE_OPTIONS="--max-old-space-size=4096" npm install -g pnpm@10.12.1 && pnpm install && pnpm run build
-    startCommand: cd packages/cli && node dist/index.js start
+    startCommand: cd packages/cli && N8N_PORT=5678 N8N_HOST=0.0.0.0 node dist/index.js start
     nodeVersion: 22.16.0
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 5678
       - key: N8N_PORT
         value: 5678
       - key: N8N_PROTOCOL
         value: https
       - key: N8N_HOST
+        value: 0.0.0.0
+      - key: N8N_LISTEN_ADDRESS
         value: 0.0.0.0 
