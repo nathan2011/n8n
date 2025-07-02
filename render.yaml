@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: n8n
+    env: node
+    buildCommand: NODE_OPTIONS="--max-old-space-size=4096" npm install -g pnpm@10.12.1 && pnpm install && pnpm run build
+    startCommand: cd packages/cli/bin && ./n8n start
+    nodeVersion: 22.16.0
+    envVars:
+      - key: NODE_ENV
+        value: production 
