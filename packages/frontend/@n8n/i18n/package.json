@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run typecheck && tsup",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" pnpm run typecheck && tsup",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest run",

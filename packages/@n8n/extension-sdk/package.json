@@ -35,7 +35,7 @@
     "lint": "eslint . --quiet",
     "typecheck:frontend": "vue-tsc --noEmit --project tsconfig.frontend.json",
     "typecheck:backend": "tsc --noEmit --project tsconfig.backend.json",
-    "build": "pnpm \"/^typecheck:.+/\" && pnpm clean && tsup && pnpm create-json-schema",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" pnpm \"/^typecheck:.+/\" && pnpm clean && tsup && pnpm create-json-schema",
     "create-json-schema": "tsx scripts/create-json-schema.ts",
     "preview": "vite preview"
   },
