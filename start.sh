@@ -45,6 +45,20 @@ echo "NPM version: $(npm --version)"
 echo "Checking bin directory contents:"
 ls -la bin/
 
+# Check if the start command file exists
+echo "Checking if start command file exists:"
+if [ -f "dist/commands/start.js" ]; then
+    echo "✓ dist/commands/start.js exists"
+else
+    echo "✗ dist/commands/start.js not found"
+fi
+
+# Check dist directory structure
+echo "Checking dist directory structure:"
+ls -la dist/ | head -10
+echo "Checking dist/commands directory:"
+ls -la dist/commands/ | head -10
+
 # Add error handling and verbose logging
 set -e  # Exit on any error
 set -x  # Print commands as they execute
