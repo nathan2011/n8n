@@ -30,9 +30,9 @@ echo "DB_SQLITE_DATABASE: $DB_SQLITE_DATABASE"
 # Change to CLI directory
 cd packages/cli
 
-# Check if dist/index.js exists
-if [ ! -f "dist/index.js" ]; then
-    echo "Error: dist/index.js not found. CLI package may not be built."
+# Check if the n8n binary exists
+if [ ! -f "bin/n8n" ]; then
+    echo "Error: bin/n8n not found. CLI package may not be built."
     exit 1
 fi
 
@@ -41,13 +41,21 @@ echo "Current directory: $(pwd)"
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"
 
+# Check if the bin directory has the necessary files
+echo "Checking bin directory contents:"
+ls -la bin/
+
 # Add error handling and verbose logging
 set -e  # Exit on any error
 set -x  # Print commands as they execute
 
-# Start n8n with better error reporting
-node dist/index.js start 2>&1 | tee n8n.log
+# Start n8n using the binary with better error reporting and show output immediately
+echo "Starting n8n process..."
+./bin/n8n start 2>&1 | tee n8n.log
 
 # If we reach here, the process has exited
-echo "n8n process has exited"
+echo "n8n process has exited with code: $?"
+echo "=== n8n.log contents ==="
+cat n8n.log
+echo "=== End of n8n.log ==="
 exit 1 
