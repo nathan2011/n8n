@@ -185,6 +185,8 @@ export abstract class AbstractServer {
 	}
 
 	async start(): Promise<void> {
+		await this.init();
+
 		if (!inTest) {
 			await this.setupErrorHandlers();
 			this.setupPushServer();
