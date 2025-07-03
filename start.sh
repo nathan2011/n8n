@@ -14,6 +14,10 @@ export DB_SQLITE_POOL_SIZE=0
 export DB_SQLITE_ENABLE_WAL=false
 export DB_SQLITE_VACUUM_ON_STARTUP=false
 
+# Configuration directory - use a writable location
+export N8N_CONFIG_PATH=/opt/render/project/src/.n8n
+export N8N_USER_FOLDER=/opt/render/project/src/.n8n
+
 # Additional configuration for better debugging
 export N8N_LOG_LEVEL=debug
 export N8N_DIAGNOSTICS_ENABLED=true
@@ -26,13 +30,18 @@ echo "N8N_HOST: $N8N_HOST"
 echo "N8N_LISTEN_ADDRESS: $N8N_LISTEN_ADDRESS"
 echo "DB_TYPE: $DB_TYPE"
 echo "DB_SQLITE_DATABASE: $DB_SQLITE_DATABASE"
+echo "N8N_CONFIG_PATH: $N8N_CONFIG_PATH"
+echo "N8N_USER_FOLDER: $N8N_USER_FOLDER"
+
+# Create the n8n configuration directory if it doesn't exist
+mkdir -p /opt/render/project/src/.n8n
 
 # Change to CLI directory
 cd packages/cli
 
-# Check if the n8n binary exists
-if [ ! -f "bin/n8n" ]; then
-    echo "Error: bin/n8n not found. CLI package may not be built."
+# Check if dist/index.js exists
+if [ ! -f "dist/index.js" ]; then
+    echo "Error: dist/index.js not found. CLI package may not be built."
     exit 1
 fi
 
@@ -41,35 +50,42 @@ echo "Current directory: $(pwd)"
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"
 
-# Check if the bin directory has the necessary files
+# Check bin directory contents
 echo "Checking bin directory contents:"
 ls -la bin/
 
-# Check if the start command file exists
+# Check if start command file exists
 echo "Checking if start command file exists:"
 if [ -f "dist/commands/start.js" ]; then
     echo "✓ dist/commands/start.js exists"
 else
-    echo "✗ dist/commands/start.js not found"
+    echo "✗ dist/commands/start.js does not exist"
+    exit 1
 fi
 
 # Check dist directory structure
 echo "Checking dist directory structure:"
-ls -la dist/ | head -10
-echo "Checking dist/commands directory:"
-ls -la dist/commands/ | head -10
+ls -la dist/ | head -20
 
-# Add error handling and verbose logging
+# Check dist/commands directory
+echo "Checking dist/commands directory:"
+ls -la dist/commands/ | head -20
+
+echo "Starting n8n process..."
 set -e  # Exit on any error
 set -x  # Print commands as they execute
 
-# Start n8n using the binary with better error reporting and show output immediately
-echo "Starting n8n process..."
+# Start n8n and capture output
 ./bin/n8n start 2>&1 | tee n8n.log
 
-# If we reach here, the process has exited
-echo "n8n process has exited with code: $?"
+# Check exit code
+EXIT_CODE=$?
+echo "n8n process has exited with code: $EXIT_CODE"
+
+# Show log contents for debugging
 echo "=== n8n.log contents ==="
 cat n8n.log
 echo "=== End of n8n.log ==="
-exit 1 
+
+# Exit with the same code as n8n
+exit $EXIT_CODE 
